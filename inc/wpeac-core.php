@@ -207,13 +207,18 @@ class WPEAC_Core {
    * @param string $method HTTP method used for the current API request
 	 */
 	public static function send_header_cache_control_api( $route, $method = null ) {
-    // Do not set cache headers for POST requests.
-    if ( "POST" === $method ) {
-      return;
-    }
+		// Do not set cache headers for POST requests.
+		if ( "POST" === $method ) {
+			return;
+		}
 		$namespace = WPEAC_Core::get_namespace( $route );
 		$namespace_cache_length = self::get( $namespace . '_cache_expires_value' );
 		$namespace_cache_length = apply_filters( 'wpe_ac_namespace_cache_length', $namespace_cache_length, $namespace, $route );
-		header( "Cache-Control: max-age=$namespace_cache_length, must-revalidate" );
+		// Allow caching only if max-age has positive value.
+		if ( $namespace_cache_length > 0 ) {
+			header( "Cache-Control: max-age=$namespace_cache_length, must-revalidate" );
+		} else {
+			header( "Cache-Control: max-age=0, no-cache" );
+		}
 	}
 }
