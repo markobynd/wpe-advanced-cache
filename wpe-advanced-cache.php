@@ -63,7 +63,9 @@ add_action( 'wp', 'wpe_ac_add_cache_header' );
 
 add_filter( 'rest_post_dispatch', function( $result, $server, $request ) {
 	//Pull route from the request
-	$route = $request->get_route();
-	WPEAC_Core::send_header_cache_control_api( $route );
+  $route = $request->get_route();
+  // Get request method.
+  $method = $request->get_method();
+	WPEAC_Core::send_header_cache_control_api( $route, $method );
 	return $result;
 }, 10, 3 );
